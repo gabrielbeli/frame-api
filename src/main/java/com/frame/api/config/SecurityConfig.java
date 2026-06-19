@@ -15,6 +15,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/health").permitAll()
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/workspaces/**").permitAll()
+                        .requestMatchers("/api/projects/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
