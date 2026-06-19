@@ -14,6 +14,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/health").permitAll()
                         .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/workspaces/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
