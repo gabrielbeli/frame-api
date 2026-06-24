@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.frame.api.common.exception.ConflictException;
 import com.frame.api.common.exception.ResourceNotFoundException;
+import com.frame.api.common.exception.ForbiddenException;
 
 import java.util.List;
 import java.util.UUID;
@@ -75,5 +76,21 @@ public class WorkspaceService {
         }
 
         return description.trim();
+    }
+
+    @Transactional(readOnly = true)
+    public WorkspaceResponse findById(UUID workspaceId, UUID ownerId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Workspace not found"));
+
+        ensureWorkspaceBelongsToUser(workspace, ownerId);
+
+        return WorkspaceResponse.fromEntity(workspace);
+    }
+
+    private void ensureWorkspaceBelongsToUser(Workspace workspace, UUID ownerId) {
+        if (!workspace.getOwner().getId().equals(ownerId)) {
+            throw new ForbiddenException("You do not have permission to access this workspace");
+        }
     }
 }

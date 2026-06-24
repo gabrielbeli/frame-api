@@ -177,4 +177,14 @@ public class SceneService {
 
         return position;
     }
+
+    @Transactional(readOnly = true)
+    public SceneResponse findById(UUID sceneId, UUID ownerId) {
+        Scene scene = sceneRepository.findById(sceneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Scene not found"));
+
+        ensureSceneBelongsToUser(scene, ownerId);
+
+        return SceneResponse.fromEntity(scene);
+    }
 }

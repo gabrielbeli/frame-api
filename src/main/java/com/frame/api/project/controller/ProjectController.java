@@ -41,6 +41,16 @@ public class ProjectController {
         return projectService.findAllByOwnerId(ownerId);
     }
 
+    @GetMapping("/{projectId}")
+    public ProjectResponse findById(
+            @PathVariable UUID projectId,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return projectService.findById(projectId, ownerId);
+    }
+
     @GetMapping("/workspace/{workspaceId}")
     public List<ProjectResponse> findByWorkspaceId(
             @PathVariable UUID workspaceId,
@@ -50,4 +60,5 @@ public class ProjectController {
 
         return projectService.findByWorkspaceId(workspaceId, ownerId);
     }
+
 }

@@ -92,4 +92,14 @@ public class ProjectService {
 
         return description.trim();
     }
+
+    @Transactional(readOnly = true)
+    public ProjectResponse findById(UUID projectId, UUID ownerId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
+        ensureWorkspaceBelongsToUser(project.getWorkspace(), ownerId);
+
+        return ProjectResponse.fromEntity(project);
+    }
 }

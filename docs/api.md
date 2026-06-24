@@ -159,6 +159,9 @@ The workspace owner is automatically resolved from the authenticated JWT token.
 
 Lists workspaces owned by the authenticated user.
 
+### GET `/api/workspaces/{workspaceId}`
+
+Returns a workspace owned by the authenticated user.
 
 ---
 
@@ -198,6 +201,10 @@ Creates a project inside a workspace owned by the authenticated user.
 ### GET `/api/projects`
 
 Lists projects from workspaces owned by the authenticated user.
+
+### GET `/api/projects/{projectId}`
+
+Returns a project from a workspace owned by the authenticated user.
 
 ---
 
@@ -241,6 +248,10 @@ Creates a scene inside a project owned by the authenticated user.
 ### GET `/api/scenes`
 
 Lists scenes from projects owned by the authenticated user.
+
+### GET `/api/scenes/{sceneId}`
+
+Returns a scene from a project owned by the authenticated user.
 
 ---
 

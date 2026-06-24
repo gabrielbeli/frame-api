@@ -37,4 +37,14 @@ public class WorkspaceController {
 
         return workspaceService.findByOwnerId(ownerId);
     }
+
+    @GetMapping("/{workspaceId}")
+    public WorkspaceResponse findById(
+            @PathVariable UUID workspaceId,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return workspaceService.findById(workspaceId, ownerId);
+    }
 }

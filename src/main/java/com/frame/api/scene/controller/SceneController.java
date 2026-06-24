@@ -42,6 +42,16 @@ public class SceneController {
         return sceneService.findAllByOwnerId(ownerId);
     }
 
+    @GetMapping("/{sceneId}")
+    public SceneResponse findById(
+            @PathVariable UUID sceneId,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return sceneService.findById(sceneId, ownerId);
+    }
+
     @GetMapping("/project/{projectId}")
     public List<SceneResponse> findByProjectId(
             @PathVariable UUID projectId,
