@@ -32,12 +32,9 @@ public class WorkspaceController {
     }
 
     @GetMapping
-    public List<WorkspaceResponse> findAll() {
-        return workspaceService.findAll();
-    }
+    public List<WorkspaceResponse> findAll(@AuthenticationPrincipal Jwt jwt) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
 
-    @GetMapping("/owner/{ownerId}")
-    public List<WorkspaceResponse> findByOwnerId(@PathVariable UUID ownerId) {
         return workspaceService.findByOwnerId(ownerId);
     }
 }

@@ -127,6 +127,23 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ApiErrorResponse handleForbidden(
+            ForbiddenException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+
+        return new ApiErrorResponse(
+                Instant.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI(),
+                List.of()
+        );
+    }
+
     @ExceptionHandler(Exception.class)
     public ApiErrorResponse handleGenericException(
             Exception exception,

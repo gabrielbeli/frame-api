@@ -1,5 +1,6 @@
 package com.frame.api.project.service;
 
+import com.frame.api.common.exception.ForbiddenException;
 import com.frame.api.project.dto.CreateProjectRequest;
 import com.frame.api.project.dto.ProjectResponse;
 import com.frame.api.project.entity.Project;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 @Service
 public class ProjectService {
+
     private final ProjectRepository projectRepository;
     private final WorkspaceRepository workspaceRepository;
 
@@ -29,9 +31,11 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectResponse create(CreateProjectRequest request) {
+    public ProjectResponse create(CreateProjectRequest request, UUID ownerId) {
         Workspace workspace = workspaceRepository.findById(request.workspaceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace not found"));
+
+        ensureWorkspaceBelongsToUser(workspace, ownerId);
 
         String normalizedName = request.name().trim();
 
@@ -55,19 +59,30 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectResponse> findAll() {
-        return projectRepository.findAll()
+    public List<ProjectResponse> findAllByOwnerId(UUID ownerId) {
+        return projectRepository.findByWorkspace_Owner_Id(ownerId)
                 .stream()
                 .map(ProjectResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectResponse> findByWorkspaceId(UUID workspaceId) {
+    public List<ProjectResponse> findByWorkspaceId(UUID workspaceId, UUID ownerId) {
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Workspace not found"));
+
+        ensureWorkspaceBelongsToUser(workspace, ownerId);
+
         return projectRepository.findByWorkspaceId(workspaceId)
                 .stream()
                 .map(ProjectResponse::fromEntity)
                 .toList();
+    }
+
+    private void ensureWorkspaceBelongsToUser(Workspace workspace, UUID ownerId) {
+        if (!workspace.getOwner().getId().equals(ownerId)) {
+            throw new ForbiddenException("You do not have permission to access this workspace");
+        }
     }
 
     private String normalizeDescription(String description) {

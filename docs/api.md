@@ -157,13 +157,8 @@ The workspace owner is automatically resolved from the authenticated JWT token.
 
 ### GET `/api/workspaces`
 
-Lists all workspaces.
+Lists workspaces owned by the authenticated user.
 
----
-
-### GET `/api/workspaces/owner/{ownerId}`
-
-Lists all workspaces owned by a specific user.
 
 ---
 
@@ -171,7 +166,7 @@ Lists all workspaces owned by a specific user.
 
 ### POST `/api/projects`
 
-Creates a new project inside a workspace.
+Creates a project inside a workspace owned by the authenticated user.
 
 #### Request Body
 
@@ -202,13 +197,7 @@ Creates a new project inside a workspace.
 
 ### GET `/api/projects`
 
-Lists all projects.
-
----
-
-### GET `/api/projects/workspace/{workspaceId}`
-
-Lists all projects inside a specific workspace.
+Lists projects from workspaces owned by the authenticated user.
 
 ---
 
