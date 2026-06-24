@@ -37,9 +37,11 @@ Creates a new user.
 ```json
 {
   "fullName": "Gabriel Belo",
-  "email": "gabriel@example.com"
+  "email": "gabriel@example.com",
+  "password": "password123"
 }
 ```
+Passwords are stored as hashes and are never returned by the API.
 
 #### Response
 

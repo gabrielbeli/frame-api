@@ -29,12 +29,16 @@ public class FrameUser {
     @Column(nullable = false)
     private Instant updatedAt;
 
+    @Column(name = "password_hash")
+    private String passwordHash;
+
     public FrameUser() {
     }
 
-    public FrameUser(String fullName, String email, UserRole role) {
+    public FrameUser(String fullName, String email, String passwordHash,UserRole role) {
         this.fullName = fullName;
         this.email = email;
+        this.passwordHash = passwordHash;
         this.role = role;
     }
 
@@ -101,4 +105,13 @@ public class FrameUser {
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
 }

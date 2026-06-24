@@ -5,6 +5,7 @@ import com.frame.api.user.dto.UserResponse;
 import com.frame.api.user.entity.FrameUser;
 import com.frame.api.user.entity.UserRole;
 import com.frame.api.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.frame.api.common.exception.ConflictException;
 
@@ -12,10 +13,13 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponse create(CreateUserRequest request) {
@@ -25,9 +29,12 @@ public class UserService {
             throw new ConflictException("Email is already in use");
         }
 
+        String passwordHash = passwordEncoder.encode(request.password());
+
         FrameUser user = new FrameUser(
                 request.fullName().trim(),
                 normalizedEmail,
+                passwordHash,
                 UserRole.MEMBER
         );
 
