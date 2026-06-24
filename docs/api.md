@@ -165,6 +165,22 @@ Returns a workspace owned by the authenticated user.
 
 ---
 
+### PATCH `/api/workspaces/{workspaceId}`
+
+Updates a workspace owned by the authenticated user.
+
+#### Request Body
+
+All fields are optional.
+
+```json
+{
+  "name": "Frame Creative Studio",
+  "description": "Updated workspace for organizing creative production workflows."
+}
+```
+---
+
 ## Projects
 
 ### POST `/api/projects`
