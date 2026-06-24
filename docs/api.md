@@ -55,13 +55,40 @@ Passwords are stored as hashes and are never returned by the API.
   "updatedAt": "2026-06-24T12:00:00Z"
 }
 ```
-
 ---
 
 ### GET `/api/users`
 
 Lists all users.
 
+---
+
+## Auth
+
+### POST `/api/auth/login`
+
+Authenticates a user and returns a JWT access token.
+
+#### Request Body
+
+```json
+{
+  "email": "gabriel@example.com",
+  "password": "password123"
+}
+```
+#### Response
+```json
+{
+"accessToken": "jwt-token",
+"tokenType": "Bearer",
+"expiresAt": "2026-06-24T12:00:00Z",
+"userId": "uuid",
+"fullName": "Gabriel Belo",
+"email": "gabriel@example.com",
+"role": "MEMBER"
+}
+```
 ---
 
 ## Workspaces

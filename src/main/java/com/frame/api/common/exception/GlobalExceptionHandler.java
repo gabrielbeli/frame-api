@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import java.time.Instant;
 import java.util.List;
@@ -104,6 +105,23 @@ public class GlobalExceptionHandler {
                 status.value(),
                 status.getReasonPhrase(),
                 "Malformed JSON request or invalid value",
+                request.getRequestURI(),
+                List.of()
+        );
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ApiErrorResponse handleBadCredentials(
+            BadCredentialsException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        return new ApiErrorResponse(
+                Instant.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                "Invalid credentials",
                 request.getRequestURI(),
                 List.of()
         );
