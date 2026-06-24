@@ -16,6 +16,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/workspaces/**").permitAll()
                         .requestMatchers("/api/projects/**").permitAll()
+                        .requestMatchers("/api/scenes/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
