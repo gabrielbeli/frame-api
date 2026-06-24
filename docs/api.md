@@ -347,6 +347,46 @@ APPROVED
 
 ---
 
+## Dashboard
+
+### GET `/api/dashboard/summary`
+
+Returns a summary of the authenticated user's workspaces, projects and scenes.
+
+Requires authentication.
+
+```txt
+Authorization: Bearer jwt-token
+```
+
+#### Response
+
+```json
+{
+  "totalWorkspaces": 1,
+  "totalProjects": 2,
+  "activeProjects": 1,
+  "archivedProjects": 0,
+  "totalScenes": 4,
+  "scenesInProgress": 1,
+  "scenesInReview": 0,
+  "approvedScenes": 1,
+  "recentScenes": [
+    {
+      "id": "scene-uuid",
+      "title": "Opening Mood",
+      "projectName": "Frame Visual Campaign",
+      "status": "IN_PROGRESS",
+      "position": 2,
+      "layer": "Visual Reference",
+      "updatedAt": "2026-06-24T12:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
 ## Error Response Format
 
 Frame API uses a standardized error response.
