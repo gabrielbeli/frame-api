@@ -8,6 +8,8 @@ import com.frame.api.workspace.entity.Workspace;
 import com.frame.api.workspace.repository.WorkspaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.frame.api.common.exception.ConflictException;
+import com.frame.api.common.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -28,7 +30,7 @@ public class WorkspaceService {
     @Transactional
     public WorkspaceResponse create(CreateWorkspaceRequest request) {
         FrameUser owner = userRepository.findById(request.ownerId())
-                .orElseThrow(() -> new IllegalArgumentException("Owner not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Owner not found"));
 
         String normalizedName = request.name().trim();
 
@@ -36,7 +38,7 @@ public class WorkspaceService {
                 .existsByNameIgnoreCaseAndOwnerId(normalizedName, owner.getId());
 
         if (workspaceAlreadyExists) {
-            throw new IllegalArgumentException("Workspace name is already in use for this owner");
+            throw new ConflictException("Workspace name is already in use for this owner");
         }
 
         Workspace workspace = new Workspace(

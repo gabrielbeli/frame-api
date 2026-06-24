@@ -9,6 +9,8 @@ import com.frame.api.workspace.entity.Workspace;
 import com.frame.api.workspace.repository.WorkspaceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.frame.api.common.exception.ConflictException;
+import com.frame.api.common.exception.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +31,7 @@ public class ProjectService {
     @Transactional
     public ProjectResponse create(CreateProjectRequest request) {
         Workspace workspace = workspaceRepository.findById(request.workspaceId())
-                .orElseThrow(() -> new IllegalArgumentException("Workspace not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Workspace not found"));
 
         String normalizedName = request.name().trim();
 
@@ -37,7 +39,7 @@ public class ProjectService {
                 .existsByNameIgnoreCaseAndWorkspaceId(normalizedName, workspace.getId());
 
         if (projectAlreadyExists) {
-            throw new IllegalArgumentException("Project name is already in use for this workspace");
+            throw new ConflictException("Project name is already in use for this workspace");
         }
 
         Project project = new Project(

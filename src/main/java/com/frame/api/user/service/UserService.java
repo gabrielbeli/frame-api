@@ -6,6 +6,7 @@ import com.frame.api.user.entity.FrameUser;
 import com.frame.api.user.entity.UserRole;
 import com.frame.api.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import com.frame.api.common.exception.ConflictException;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class UserService {
         String normalizedEmail = request.email().trim().toLowerCase();
 
         if (userRepository.existsByEmail(normalizedEmail)) {
-            throw new IllegalArgumentException("Email is already in use");
+            throw new ConflictException("Email is already in use");
         }
 
         FrameUser user = new FrameUser(

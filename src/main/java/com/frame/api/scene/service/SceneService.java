@@ -9,6 +9,8 @@ import com.frame.api.scene.entity.SceneStatus;
 import com.frame.api.scene.repository.SceneRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.frame.api.common.exception.ConflictException;
+import com.frame.api.common.exception.ResourceNotFoundException;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +32,7 @@ public class SceneService {
     @Transactional
     public SceneResponse create(CreateSceneRequest request) {
         Project project = projectRepository.findById(request.projectId())
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         String normalizedTitle = request.title().trim();
 
@@ -38,7 +40,7 @@ public class SceneService {
                 .existsByTitleIgnoreCaseAndProjectId(normalizedTitle, project.getId());
 
         if (sceneAlreadyExists) {
-            throw new IllegalArgumentException("Scene title is already in use for this project");
+            throw new ConflictException("Scene title is already in use for this project");
         }
 
         Scene scene = new Scene(
