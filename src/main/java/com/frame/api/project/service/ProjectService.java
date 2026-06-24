@@ -3,6 +3,8 @@ package com.frame.api.project.service;
 import com.frame.api.common.exception.ForbiddenException;
 import com.frame.api.project.dto.CreateProjectRequest;
 import com.frame.api.project.dto.ProjectResponse;
+import com.frame.api.project.dto.UpdateProjectRequest;
+import com.frame.api.project.dto.UpdateProjectStatusRequest;
 import com.frame.api.project.entity.Project;
 import com.frame.api.project.entity.ProjectStatus;
 import com.frame.api.project.repository.ProjectRepository;
@@ -67,6 +69,16 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
+    public ProjectResponse findById(UUID projectId, UUID ownerId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
+        ensureWorkspaceBelongsToUser(project.getWorkspace(), ownerId);
+
+        return ProjectResponse.fromEntity(project);
+    }
+
+    @Transactional(readOnly = true)
     public List<ProjectResponse> findByWorkspaceId(UUID workspaceId, UUID ownerId) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace not found"));
@@ -77,6 +89,69 @@ public class ProjectService {
                 .stream()
                 .map(ProjectResponse::fromEntity)
                 .toList();
+    }
+
+    @Transactional
+    public ProjectResponse update(
+            UUID projectId,
+            UpdateProjectRequest request,
+            UUID ownerId
+    ) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
+        ensureWorkspaceBelongsToUser(project.getWorkspace(), ownerId);
+
+        if (request.name() != null) {
+            updateName(project, request.name());
+        }
+
+        if (request.description() != null) {
+            project.setDescription(normalizeDescription(request.description()));
+        }
+
+        Project updatedProject = projectRepository.save(project);
+
+        return ProjectResponse.fromEntity(updatedProject);
+    }
+
+    @Transactional
+    public ProjectResponse updateStatus(
+            UUID projectId,
+            UpdateProjectStatusRequest request,
+            UUID ownerId
+    ) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
+        ensureWorkspaceBelongsToUser(project.getWorkspace(), ownerId);
+
+        project.setStatus(request.status());
+
+        Project updatedProject = projectRepository.save(project);
+
+        return ProjectResponse.fromEntity(updatedProject);
+    }
+
+    private void updateName(Project project, String name) {
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("Project name cannot be blank");
+        }
+
+        String normalizedName = name.trim();
+
+        boolean nameAlreadyExists = projectRepository
+                .existsByNameIgnoreCaseAndWorkspaceIdAndIdNot(
+                        normalizedName,
+                        project.getWorkspace().getId(),
+                        project.getId()
+                );
+
+        if (nameAlreadyExists) {
+            throw new ConflictException("Project name is already in use for this workspace");
+        }
+
+        project.setName(normalizedName);
     }
 
     private void ensureWorkspaceBelongsToUser(Workspace workspace, UUID ownerId) {
@@ -91,15 +166,5 @@ public class ProjectService {
         }
 
         return description.trim();
-    }
-
-    @Transactional(readOnly = true)
-    public ProjectResponse findById(UUID projectId, UUID ownerId) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
-
-        ensureWorkspaceBelongsToUser(project.getWorkspace(), ownerId);
-
-        return ProjectResponse.fromEntity(project);
     }
 }

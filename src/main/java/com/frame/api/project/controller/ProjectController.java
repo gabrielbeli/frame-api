@@ -2,6 +2,8 @@ package com.frame.api.project.controller;
 
 import com.frame.api.project.dto.CreateProjectRequest;
 import com.frame.api.project.dto.ProjectResponse;
+import com.frame.api.project.dto.UpdateProjectRequest;
+import com.frame.api.project.dto.UpdateProjectStatusRequest;
 import com.frame.api.project.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,6 @@ public class ProjectController {
     private final ProjectService projectService;
 
     public ProjectController(ProjectService projectService) {
-
         this.projectService = projectService;
     }
 
@@ -61,4 +62,25 @@ public class ProjectController {
         return projectService.findByWorkspaceId(workspaceId, ownerId);
     }
 
+    @PatchMapping("/{projectId}")
+    public ProjectResponse update(
+            @PathVariable UUID projectId,
+            @RequestBody @Valid UpdateProjectRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return projectService.update(projectId, request, ownerId);
+    }
+
+    @PatchMapping("/{projectId}/status")
+    public ProjectResponse updateStatus(
+            @PathVariable UUID projectId,
+            @RequestBody @Valid UpdateProjectStatusRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return projectService.updateStatus(projectId, request, ownerId);
+    }
 }

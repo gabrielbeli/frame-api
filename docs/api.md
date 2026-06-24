@@ -224,6 +224,39 @@ Returns a project from a workspace owned by the authenticated user.
 
 ---
 
+### PATCH `/api/projects/{projectId}`
+
+Updates a project from a workspace owned by the authenticated user.
+
+#### Request Body
+
+All fields are optional.
+
+```json
+{
+  "name": "Frame Visual Campaign",
+  "description": "Updated project for organizing scenes, references and creative decisions."
+}
+```
+### PATCH `/api/projects/{projectId}/status`
+
+Updates the status of a project from a workspace owned by the authenticated user.
+
+#### Avaliable Statuses
+
+- DRAFT
+- ACTIVE
+- ARCHIVED
+
+#### Request Body
+
+```json
+{
+  "status": "ACTIVE"
+}
+```
+---
+
 ## Scenes
 
 ### POST `/api/scenes`
