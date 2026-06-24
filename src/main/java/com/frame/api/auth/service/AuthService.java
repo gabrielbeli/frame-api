@@ -9,12 +9,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
+import com.frame.api.auth.dto.CurrentUserResponse;
 
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -69,6 +71,20 @@ public class AuthService {
                 token,
                 "Bearer",
                 expiresAt,
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().name()
+        );
+    }
+
+    public CurrentUserResponse getCurrentUser(String userId) {
+        UUID id = UUID.fromString(userId);
+
+        FrameUser user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return new CurrentUserResponse(
                 user.getId(),
                 user.getFullName(),
                 user.getEmail(),

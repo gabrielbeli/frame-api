@@ -5,6 +5,8 @@ import com.frame.api.workspace.dto.WorkspaceResponse;
 import com.frame.api.workspace.service.WorkspaceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +24,11 @@ public class WorkspaceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public WorkspaceResponse create(@RequestBody @Valid CreateWorkspaceRequest request) {
-        return workspaceService.create(request);
+    public WorkspaceResponse create(@RequestBody @Valid CreateWorkspaceRequest request, @AuthenticationPrincipal Jwt jwt) {
+
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return workspaceService.create(request, ownerId);
     }
 
     @GetMapping

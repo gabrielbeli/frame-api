@@ -96,7 +96,26 @@ Protected endpoints require a JWT Bearer token.
 Authorization: Bearer jwt-token
 ```
 
-Public endpoints:
+### GET `/api/auth/me`
+
+Returns the authenticated user.
+
+Requires authentication.
+
+```txt
+Authorization: Bearer jwt-token
+```
+
+#### Response
+```json
+{
+"id": "uuid",
+"fullName": "Gabriel Belo",
+"email": "gabriel@example.com",
+"role": "MEMBER"
+}
+```
+### Public endpoints:
 
 - GET /api/health
 - POST /api/users
@@ -115,10 +134,10 @@ Creates a new workspace.
 ```json
 {
   "name": "Frame Studio",
-  "description": "Creative workspace for managing visual projects, scenes and references.",
-  "ownerId": "user-uuid"
+  "description": "Creative workspace for managing visual projects, scenes and references."
 }
 ```
+The workspace owner is automatically resolved from the authenticated JWT token.
 
 #### Response
 

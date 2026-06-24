@@ -12,6 +12,7 @@ import com.frame.api.common.exception.ConflictException;
 import com.frame.api.common.exception.ResourceNotFoundException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class WorkspaceService {
@@ -28,8 +29,8 @@ public class WorkspaceService {
     }
 
     @Transactional
-    public WorkspaceResponse create(CreateWorkspaceRequest request) {
-        FrameUser owner = userRepository.findById(request.ownerId())
+    public WorkspaceResponse create(CreateWorkspaceRequest request, UUID ownerId) {
+        FrameUser owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner not found"));
 
         String normalizedName = request.name().trim();
