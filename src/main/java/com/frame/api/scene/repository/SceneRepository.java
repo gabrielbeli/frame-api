@@ -9,6 +9,7 @@ import java.util.UUID;
 public interface SceneRepository extends JpaRepository<Scene,UUID> {
 
     List<Scene> findByProjectIdOrderByPositionAsc(UUID projectId);
+    List<Scene> findByProject_Workspace_Owner_IdOrderByPositionAsc(UUID ownerId);
 
     boolean existsByTitleIgnoreCaseAndProjectId(String title, UUID projectId);
 

@@ -205,7 +205,7 @@ Lists projects from workspaces owned by the authenticated user.
 
 ### POST `/api/scenes`
 
-Creates a new scene inside a project.
+Creates a scene inside a project owned by the authenticated user.
 
 #### Request Body
 
@@ -240,19 +240,13 @@ Creates a new scene inside a project.
 
 ### GET `/api/scenes`
 
-Lists all scenes.
-
----
-
-### GET `/api/scenes/project/{projectId}`
-
-Lists all scenes from a specific project ordered by position.
+Lists scenes from projects owned by the authenticated user.
 
 ---
 
 ### PATCH `/api/scenes/{sceneId}`
 
-Updates scene details.
+Updates a scene owned by the authenticated user.
 
 #### Request Body
 
@@ -271,7 +265,7 @@ All fields are optional.
 
 ### PATCH `/api/scenes/{sceneId}/status`
 
-Updates the scene status.
+Updates the status of a scene owned by the authenticated user.
 
 #### Request Body
 

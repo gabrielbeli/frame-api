@@ -1,5 +1,6 @@
 package com.frame.api.scene.service;
 
+import com.frame.api.common.exception.ForbiddenException;
 import com.frame.api.project.entity.Project;
 import com.frame.api.project.repository.ProjectRepository;
 import com.frame.api.scene.dto.CreateSceneRequest;
@@ -32,9 +33,11 @@ public class SceneService {
     }
 
     @Transactional
-    public SceneResponse create(CreateSceneRequest request) {
+    public SceneResponse create(CreateSceneRequest request, UUID ownerId) {
         Project project = projectRepository.findById(request.projectId())
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
+        ensureProjectBelongsToUser(project, ownerId);
 
         String normalizedTitle = request.title().trim();
 
@@ -60,15 +63,20 @@ public class SceneService {
     }
 
     @Transactional(readOnly = true)
-    public List<SceneResponse> findAll() {
-        return sceneRepository.findAll()
+    public List<SceneResponse> findAllByOwnerId(UUID ownerId) {
+        return sceneRepository.findByProject_Workspace_Owner_IdOrderByPositionAsc(ownerId)
                 .stream()
                 .map(SceneResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<SceneResponse> findByProjectId(UUID projectId) {
+    public List<SceneResponse> findByProjectId(UUID projectId, UUID ownerId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+
+        ensureProjectBelongsToUser(project, ownerId);
+
         return sceneRepository.findByProjectIdOrderByPositionAsc(projectId)
                 .stream()
                 .map(SceneResponse::fromEntity)
@@ -76,9 +84,11 @@ public class SceneService {
     }
 
     @Transactional
-    public SceneResponse update(UUID sceneId, UpdateSceneRequest request) {
+    public SceneResponse update(UUID sceneId, UpdateSceneRequest request, UUID ownerId) {
         Scene scene = sceneRepository.findById(sceneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Scene not found"));
+
+        ensureSceneBelongsToUser(scene, ownerId);
 
         if (request.title() != null) {
             updateTitle(scene, request.title());
@@ -102,9 +112,11 @@ public class SceneService {
     }
 
     @Transactional
-    public SceneResponse updateStatus(UUID sceneId, UpdateSceneStatusRequest request) {
+    public SceneResponse updateStatus(UUID sceneId, UpdateSceneStatusRequest request, UUID ownerId) {
         Scene scene = sceneRepository.findById(sceneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Scene not found"));
+
+        ensureSceneBelongsToUser(scene, ownerId);
 
         scene.setStatus(request.status());
 
@@ -132,6 +144,22 @@ public class SceneService {
         }
 
         scene.setTitle(normalizedTitle);
+    }
+
+    private void ensureProjectBelongsToUser(Project project, UUID ownerId) {
+        UUID projectOwnerId = project.getWorkspace().getOwner().getId();
+
+        if (!projectOwnerId.equals(ownerId)) {
+            throw new ForbiddenException("You do not have permission to access this project");
+        }
+    }
+
+    private void ensureSceneBelongsToUser(Scene scene, UUID ownerId) {
+        UUID sceneOwnerId = scene.getProject().getWorkspace().getOwner().getId();
+
+        if (!sceneOwnerId.equals(ownerId)) {
+            throw new ForbiddenException("You do not have permission to access this scene");
+        }
     }
 
     private String normalizeText(String text) {

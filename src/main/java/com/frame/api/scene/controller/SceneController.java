@@ -7,6 +7,8 @@ import com.frame.api.scene.dto.UpdateSceneStatusRequest;
 import com.frame.api.scene.service.SceneService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,33 +26,51 @@ public class SceneController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SceneResponse create(@RequestBody @Valid CreateSceneRequest request) {
-        return sceneService.create(request);
+    public SceneResponse create(
+            @RequestBody @Valid CreateSceneRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return sceneService.create(request, ownerId);
     }
 
     @GetMapping
-    public List<SceneResponse> findAll() {
-        return sceneService.findAll();
+    public List<SceneResponse> findAll(@AuthenticationPrincipal Jwt jwt) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return sceneService.findAllByOwnerId(ownerId);
     }
 
     @GetMapping("/project/{projectId}")
-    public List<SceneResponse> findByProjectId(@PathVariable UUID projectId) {
-        return sceneService.findByProjectId(projectId);
+    public List<SceneResponse> findByProjectId(
+            @PathVariable UUID projectId,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return sceneService.findByProjectId(projectId, ownerId);
     }
 
     @PatchMapping("/{sceneId}")
     public SceneResponse update(
             @PathVariable UUID sceneId,
-            @RequestBody @Valid UpdateSceneRequest request
+            @RequestBody @Valid UpdateSceneRequest request,
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        return sceneService.update(sceneId, request);
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return sceneService.update(sceneId, request, ownerId);
     }
 
     @PatchMapping("/{sceneId}/status")
     public SceneResponse updateStatus(
             @PathVariable UUID sceneId,
-            @RequestBody @Valid UpdateSceneStatusRequest request
+            @RequestBody @Valid UpdateSceneStatusRequest request,
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        return sceneService.updateStatus(sceneId, request);
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return sceneService.updateStatus(sceneId, request, ownerId);
     }
 }
