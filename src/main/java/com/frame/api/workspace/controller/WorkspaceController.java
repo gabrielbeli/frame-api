@@ -3,6 +3,7 @@ package com.frame.api.workspace.controller;
 import com.frame.api.workspace.dto.CreateWorkspaceRequest;
 import com.frame.api.workspace.dto.WorkspaceResponse;
 import com.frame.api.workspace.service.WorkspaceService;
+import com.frame.api.workspace.dto.UpdateWorkspaceRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,5 +47,16 @@ public class WorkspaceController {
         UUID ownerId = UUID.fromString(jwt.getSubject());
 
         return workspaceService.findById(workspaceId, ownerId);
+    }
+
+    @PatchMapping("/{workspaceId}")
+    public WorkspaceResponse update(
+            @PathVariable UUID workspaceId,
+            @RequestBody @Valid UpdateWorkspaceRequest request,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        return workspaceService.update(workspaceId, request, ownerId);
     }
 }

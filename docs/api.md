@@ -165,6 +165,22 @@ Returns a workspace owned by the authenticated user.
 
 ---
 
+### PATCH `/api/workspaces/{workspaceId}`
+
+Updates a workspace owned by the authenticated user.
+
+#### Request Body
+
+All fields are optional.
+
+```json
+{
+  "name": "Frame Creative Studio",
+  "description": "Updated workspace for organizing creative production workflows."
+}
+```
+---
+
 ## Projects
 
 ### POST `/api/projects`
@@ -206,6 +222,39 @@ Lists projects from workspaces owned by the authenticated user.
 
 Returns a project from a workspace owned by the authenticated user.
 
+---
+
+### PATCH `/api/projects/{projectId}`
+
+Updates a project from a workspace owned by the authenticated user.
+
+#### Request Body
+
+All fields are optional.
+
+```json
+{
+  "name": "Frame Visual Campaign",
+  "description": "Updated project for organizing scenes, references and creative decisions."
+}
+```
+### PATCH `/api/projects/{projectId}/status`
+
+Updates the status of a project from a workspace owned by the authenticated user.
+
+#### Avaliable Statuses
+
+- DRAFT
+- ACTIVE
+- ARCHIVED
+
+#### Request Body
+
+```json
+{
+  "status": "ACTIVE"
+}
+```
 ---
 
 ## Scenes
@@ -294,6 +343,46 @@ DRAFT
 IN_PROGRESS
 REVIEW
 APPROVED
+```
+
+---
+
+## Dashboard
+
+### GET `/api/dashboard/summary`
+
+Returns a summary of the authenticated user's workspaces, projects and scenes.
+
+Requires authentication.
+
+```txt
+Authorization: Bearer jwt-token
+```
+
+#### Response
+
+```json
+{
+  "totalWorkspaces": 1,
+  "totalProjects": 2,
+  "activeProjects": 1,
+  "archivedProjects": 0,
+  "totalScenes": 4,
+  "scenesInProgress": 1,
+  "scenesInReview": 0,
+  "approvedScenes": 1,
+  "recentScenes": [
+    {
+      "id": "scene-uuid",
+      "title": "Opening Mood",
+      "projectName": "Frame Visual Campaign",
+      "status": "IN_PROGRESS",
+      "position": 2,
+      "layer": "Visual Reference",
+      "updatedAt": "2026-06-24T12:00:00Z"
+    }
+  ]
+}
 ```
 
 ---

@@ -53,7 +53,10 @@ The backend foundation is being built with Java and Spring Boot, focusing on cle
 - Health check endpoint
 - User creation and listing
 - Workspace creation and listing
+- Workspace update endpoint
 - Project creation and listing
+- Project update endpoints
+- Project status update
 - Scene creation and listing
 - Scene update endpoints
 - Scene status update
@@ -62,17 +65,21 @@ The backend foundation is being built with Java and Spring Boot, focusing on cle
 - Global exception handling
 - Request validation
 - Local configuration ignored from Git
+- Authenticated workspace creation
+- Ownership-based access control
+- Dashboard summary endpoint
 
 ---
 
 ## Domain Structure
 ```
-User    
+Authenticated User    
 └── Workspace   
     └── Project     
         └── Scene
 ```
 Frame is structured around creative workspaces.
+
 A user can own workspaces, each workspace can contain projects, and each project can contain scenes organized by position and layer.
 
 Scenes are the first core product concept of Frame, designed to represent creative units inside a timeline-like workflow.
