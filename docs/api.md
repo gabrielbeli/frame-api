@@ -89,6 +89,19 @@ Authenticates a user and returns a JWT access token.
 "role": "MEMBER"
 }
 ```
+
+Protected endpoints require a JWT Bearer token.
+
+```txt
+Authorization: Bearer jwt-token
+```
+
+Public endpoints:
+
+- GET /api/health
+- POST /api/users
+- POST /api/auth/login
+
 ---
 
 ## Workspaces
