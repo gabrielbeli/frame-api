@@ -2,6 +2,8 @@ package com.frame.api.scene.controller;
 
 import com.frame.api.scene.dto.CreateSceneRequest;
 import com.frame.api.scene.dto.SceneResponse;
+import com.frame.api.scene.dto.UpdateSceneRequest;
+import com.frame.api.scene.dto.UpdateSceneStatusRequest;
 import com.frame.api.scene.service.SceneService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -34,5 +36,21 @@ public class SceneController {
     @GetMapping("/project/{projectId}")
     public List<SceneResponse> findByProjectId(@PathVariable UUID projectId) {
         return sceneService.findByProjectId(projectId);
+    }
+
+    @PatchMapping("/{sceneId}")
+    public SceneResponse update(
+            @PathVariable UUID sceneId,
+            @RequestBody @Valid UpdateSceneRequest request
+    ) {
+        return sceneService.update(sceneId, request);
+    }
+
+    @PatchMapping("/{sceneId}/status")
+    public SceneResponse updateStatus(
+            @PathVariable UUID sceneId,
+            @RequestBody @Valid UpdateSceneStatusRequest request
+    ) {
+        return sceneService.updateStatus(sceneId, request);
     }
 }

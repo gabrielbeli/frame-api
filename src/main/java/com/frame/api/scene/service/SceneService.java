@@ -4,6 +4,8 @@ import com.frame.api.project.entity.Project;
 import com.frame.api.project.repository.ProjectRepository;
 import com.frame.api.scene.dto.CreateSceneRequest;
 import com.frame.api.scene.dto.SceneResponse;
+import com.frame.api.scene.dto.UpdateSceneRequest;
+import com.frame.api.scene.dto.UpdateSceneStatusRequest;
 import com.frame.api.scene.entity.Scene;
 import com.frame.api.scene.entity.SceneStatus;
 import com.frame.api.scene.repository.SceneRepository;
@@ -71,6 +73,65 @@ public class SceneService {
                 .stream()
                 .map(SceneResponse::fromEntity)
                 .toList();
+    }
+
+    @Transactional
+    public SceneResponse update(UUID sceneId, UpdateSceneRequest request) {
+        Scene scene = sceneRepository.findById(sceneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Scene not found"));
+
+        if (request.title() != null) {
+            updateTitle(scene, request.title());
+        }
+
+        if (request.summary() != null) {
+            scene.setSummary(normalizeText(request.summary()));
+        }
+
+        if (request.position() != null) {
+            scene.setPosition(normalizePosition(request.position()));
+        }
+
+        if (request.layer() != null) {
+            scene.setLayer(normalizeText(request.layer()));
+        }
+
+        Scene updatedScene = sceneRepository.save(scene);
+
+        return SceneResponse.fromEntity(updatedScene);
+    }
+
+    @Transactional
+    public SceneResponse updateStatus(UUID sceneId, UpdateSceneStatusRequest request) {
+        Scene scene = sceneRepository.findById(sceneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Scene not found"));
+
+        scene.setStatus(request.status());
+
+        Scene updatedScene = sceneRepository.save(scene);
+
+        return SceneResponse.fromEntity(updatedScene);
+    }
+
+    private void updateTitle(Scene scene, String title) {
+        if (title.isBlank()) {
+            throw new IllegalArgumentException("Scene title cannot be blank");
+        }
+
+        String normalizedTitle = title.trim();
+
+        boolean titleAlreadyExists = sceneRepository
+                .existsByTitleIgnoreCaseAndProjectIdAndIdNot(
+                        normalizedTitle,
+                        scene.getProject().getId(),
+                        scene.getId()
+                );
+
+        if (titleAlreadyExists) {
+            throw new ConflictException("Scene title is already in use for this project");
+        }
+
+        scene.setTitle(normalizedTitle);
     }
 
     private String normalizeText(String text) {
