@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.frame.api.activity.entity.ActivityResourceType;
 import com.frame.api.activity.entity.ActivityType;
 import com.frame.api.activity.service.ActivityService;
+import com.frame.api.reference.entity.SceneReferenceType;
 
 import java.util.List;
 import java.util.UUID;
@@ -78,9 +79,11 @@ public class SceneReferenceService {
     }
 
     @Transactional(readOnly = true)
-    public List<SceneReferenceResponse> findAllByOwnerId(UUID ownerId) {
-        return referenceRepository
-                .findByScene_Project_Workspace_Owner_IdOrderByUpdatedAtDesc(ownerId)
+    public List<SceneReferenceResponse> findAllByOwnerId(
+            UUID ownerId,
+            SceneReferenceType type
+    ) {
+        return referenceRepository.findByOwnerWithFilters(ownerId, type)
                 .stream()
                 .map(SceneReferenceResponse::fromEntity)
                 .toList();
@@ -97,13 +100,17 @@ public class SceneReferenceService {
     }
 
     @Transactional(readOnly = true)
-    public List<SceneReferenceResponse> findBySceneId(UUID sceneId, UUID ownerId) {
+    public List<SceneReferenceResponse> findBySceneId(
+            UUID sceneId,
+            UUID ownerId,
+            SceneReferenceType type
+    ) {
         Scene scene = sceneRepository.findById(sceneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Scene not found"));
 
         ensureSceneBelongsToUser(scene, ownerId);
 
-        return referenceRepository.findBySceneIdOrderByUpdatedAtDesc(sceneId)
+        return referenceRepository.findBySceneWithFilters(sceneId, ownerId, type)
                 .stream()
                 .map(SceneReferenceResponse::fromEntity)
                 .toList();

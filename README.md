@@ -72,6 +72,11 @@ The backend foundation is being built with Java and Spring Boot, focusing on cle
 - Authenticated workspace creation
 - Ownership-based access control
 - Dashboard summary endpoint
+- Project filters by status
+- Scene filters by status and layer
+- Reference filters by type
+- Activity feed
+- Activity logging for workspace, project, scene and reference actions
 
 ---
 

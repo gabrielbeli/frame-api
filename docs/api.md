@@ -218,6 +218,22 @@ Creates a project inside a workspace owned by the authenticated user.
 
 Lists projects from workspaces owned by the authenticated user.
 
+Optional query params
+
+status: `DRAFT`, `ACTIVE`, `ARCHIVED`
+
+---
+
+### GET `/api/projects/workspace/{workspaceId}`
+
+Lists projects inside a workspace owned by the authenticated user.
+
+Optional query params
+
+status: `DRAFT`, `ACTIVE`, `ARCHIVED`
+
+---
+
 ### GET `/api/projects/{projectId}`
 
 Returns a project from a workspace owned by the authenticated user.
@@ -297,6 +313,26 @@ Creates a scene inside a project owned by the authenticated user.
 ### GET `/api/scenes`
 
 Lists scenes from projects owned by the authenticated user.
+
+Optional query params:
+
+status: `IDEA`, `DRAFT`, `IN_PROGRESS`, `REVIEW`, `APPROVED`
+
+layer: scene layer, for example `Script` or `Visual Reference`
+
+---
+
+### GET `/api/scenes/project/{projectId}`
+
+Lists scenes from a specific project owned by the authenticated user.
+
+Optional query params:
+
+status: `IDEA`, `DRAFT`, `IN_PROGRESS`, `REVIEW`, `APPROVED`
+
+layer: scene layer, for example `Script` or `Visual Reference`
+
+---
 
 ### GET `/api/scenes/{sceneId}`
 
@@ -382,6 +418,10 @@ DOCUMENT
 
 Lists references from scenes owned by the authenticated user.
 
+Optional query params:
+
+type: `IMAGE`, `VIDEO`, `LINK`, `TEXT`, `AUDIO`, `DOCUMENT`
+
 ---
 
 ### GET `/api/references/{referenceId}`
@@ -393,6 +433,10 @@ Returns a reference owned by the authenticated user.
 ### GET `/api/references/scene/{sceneId}`
 
 Lists references from a specific scene owned by the authenticated user.
+
+Optional query params:
+
+type: `IMAGE`, `VIDEO`, `LINK`, `TEXT`, `AUDIO`, `DOCUMENT`
 
 ---
 

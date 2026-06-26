@@ -76,8 +76,8 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectResponse> findAllByOwnerId(UUID ownerId) {
-        return projectRepository.findByWorkspace_Owner_Id(ownerId)
+    public List<ProjectResponse> findAllByOwnerId(UUID ownerId, ProjectStatus status) {
+        return projectRepository.findByOwnerWithFilters(ownerId, status)
                 .stream()
                 .map(ProjectResponse::fromEntity)
                 .toList();
@@ -94,13 +94,17 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectResponse> findByWorkspaceId(UUID workspaceId, UUID ownerId) {
+    public List<ProjectResponse> findByWorkspaceId(
+            UUID workspaceId,
+            UUID ownerId,
+            ProjectStatus status
+    ) {
         Workspace workspace = workspaceRepository.findById(workspaceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace not found"));
 
         ensureWorkspaceBelongsToUser(workspace, ownerId);
 
-        return projectRepository.findByWorkspaceId(workspaceId)
+        return projectRepository.findByWorkspaceWithFilters(workspaceId, ownerId, status)
                 .stream()
                 .map(ProjectResponse::fromEntity)
                 .toList();
