@@ -12,6 +12,9 @@ import com.frame.api.scene.entity.Scene;
 import com.frame.api.scene.repository.SceneRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.frame.api.activity.entity.ActivityResourceType;
+import com.frame.api.activity.entity.ActivityType;
+import com.frame.api.activity.service.ActivityService;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,13 +24,16 @@ public class SceneReferenceService {
 
     private final SceneReferenceRepository referenceRepository;
     private final SceneRepository sceneRepository;
+    private final ActivityService activityService;
 
     public SceneReferenceService(
             SceneReferenceRepository referenceRepository,
-            SceneRepository sceneRepository
+            SceneRepository sceneRepository,
+            ActivityService activityService
     ) {
         this.referenceRepository = referenceRepository;
         this.sceneRepository = sceneRepository;
+        this.activityService = activityService;
     }
 
     @Transactional
@@ -58,6 +64,15 @@ public class SceneReferenceService {
         );
 
         SceneReference savedReference = referenceRepository.save(reference);
+
+        activityService.log(
+                ownerId,
+                ActivityType.REFERENCE_CREATED,
+                ActivityResourceType.REFERENCE,
+                savedReference.getId(),
+                savedReference.getTitle(),
+                "Added reference \"" + savedReference.getTitle() + "\""
+        );
 
         return SceneReferenceResponse.fromEntity(savedReference);
     }
@@ -123,6 +138,15 @@ public class SceneReferenceService {
 
         SceneReference updatedReference = referenceRepository.save(reference);
 
+        activityService.log(
+                ownerId,
+                ActivityType.REFERENCE_UPDATED,
+                ActivityResourceType.REFERENCE,
+                updatedReference.getId(),
+                updatedReference.getTitle(),
+                "Updated reference \"" + updatedReference.getTitle() + "\""
+        );
+
         return SceneReferenceResponse.fromEntity(updatedReference);
     }
 
@@ -134,6 +158,15 @@ public class SceneReferenceService {
         ensureReferenceBelongsToUser(reference, ownerId);
 
         referenceRepository.delete(reference);
+
+        activityService.log(
+                ownerId,
+                ActivityType.REFERENCE_DELETED,
+                ActivityResourceType.REFERENCE,
+                reference.getId(),
+                reference.getTitle(),
+                "Deleted reference \"" + reference.getTitle() + "\""
+        );
     }
 
     private void updateTitle(SceneReference reference, String title) {

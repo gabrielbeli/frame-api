@@ -464,6 +464,40 @@ Authorization: Bearer jwt-token
 
 ---
 
+## Activity Feed
+
+### GET `/api/activity`
+
+Returns the 20 most recent activities from the authenticated user.
+
+Requires authentication.
+
+#### Header
+
+```txt
+Authorization: Bearer jwt-token
+```
+
+#### Response
+
+```json
+[
+  {
+    "id": "activity-uuid",
+    "type": "SCENE_STATUS_UPDATED",
+    "resourceType": "SCENE",
+    "resourceId": "scene-uuid",
+    "resourceTitle": "Opening Mood",
+    "message": "Changed scene \"Opening Mood\" status to REVIEW",
+    "actorId": "user-uuid",
+    "actorName": "Gabriel Belo",
+    "createdAt": "2026-06-26T12:00:00Z"
+  }
+]
+```
+
+---
+
 ## Error Response Format
 
 Frame API uses a standardized error response.
