@@ -115,6 +115,72 @@ Authorization: Bearer jwt-token
 "role": "MEMBER"
 }
 ```
+---
+### PATCH `/api/users/me`
+
+Updates the authenticated user's profile.
+
+Requires authentication.
+
+#### Header
+
+```txt
+Authorization: Bearer jwt-token
+```
+
+#### Request Body
+
+All fields are optional.
+
+```json
+{
+  "fullName": "Gabriel R. Belo",
+  "email": "gabriel.updated@example.com"
+}
+```
+
+#### Response
+
+```json
+{
+  "id": "user-uuid",
+  "fullName": "Gabriel R. Belo",
+  "email": "gabriel.updated@example.com",
+  "role": "MEMBER",
+  "createdAt": "2026-06-26T12:00:00Z",
+  "updatedAt": "2026-06-26T12:00:00Z"
+}
+```
+
+---
+
+### PATCH `/api/users/me/password`
+
+Updates the authenticated user's password.
+
+Requires authentication.
+
+#### Header
+
+```txt
+Authorization: Bearer jwt-token
+```
+
+#### Request Body
+
+```json
+{
+  "currentPassword": "password123",
+  "newPassword": "newPassword123"
+}
+```
+
+#### Response
+
+```txt
+204 No Content
+```
+---
 ### Public endpoints:
 
 - GET /api/health
