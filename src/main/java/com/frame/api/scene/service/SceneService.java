@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.frame.api.common.exception.ConflictException;
 import com.frame.api.common.exception.ResourceNotFoundException;
+import com.frame.api.activity.entity.ActivityResourceType;
+import com.frame.api.activity.entity.ActivityType;
+import com.frame.api.activity.service.ActivityService;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,13 +26,16 @@ public class SceneService {
 
     private final SceneRepository sceneRepository;
     private final ProjectRepository projectRepository;
+    private final ActivityService activityService;
 
     public SceneService(
             SceneRepository sceneRepository,
-            ProjectRepository projectRepository
+            ProjectRepository projectRepository,
+            ActivityService activityService
     ) {
         this.sceneRepository = sceneRepository;
         this.projectRepository = projectRepository;
+        this.activityService = activityService;
     }
 
     @Transactional
@@ -58,6 +64,15 @@ public class SceneService {
         );
 
         Scene savedScene = sceneRepository.save(scene);
+
+        activityService.log(
+                ownerId,
+                ActivityType.SCENE_CREATED,
+                ActivityResourceType.SCENE,
+                savedScene.getId(),
+                savedScene.getTitle(),
+                "Created scene \"" + savedScene.getTitle() + "\""
+        );
 
         return SceneResponse.fromEntity(savedScene);
     }
@@ -108,6 +123,15 @@ public class SceneService {
 
         Scene updatedScene = sceneRepository.save(scene);
 
+        activityService.log(
+                ownerId,
+                ActivityType.SCENE_UPDATED,
+                ActivityResourceType.SCENE,
+                updatedScene.getId(),
+                updatedScene.getTitle(),
+                "Updated scene \"" + updatedScene.getTitle() + "\""
+        );
+
         return SceneResponse.fromEntity(updatedScene);
     }
 
@@ -121,6 +145,15 @@ public class SceneService {
         scene.setStatus(request.status());
 
         Scene updatedScene = sceneRepository.save(scene);
+
+        activityService.log(
+                ownerId,
+                ActivityType.SCENE_STATUS_UPDATED,
+                ActivityResourceType.SCENE,
+                updatedScene.getId(),
+                updatedScene.getTitle(),
+                "Changed scene \"" + updatedScene.getTitle() + "\" status to " + updatedScene.getStatus()
+        );
 
         return SceneResponse.fromEntity(updatedScene);
     }

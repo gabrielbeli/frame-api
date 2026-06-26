@@ -1,0 +1,18 @@
+package com.frame.api.activity.entity;
+
+public enum ActivityType {
+    WORKSPACE_CREATED,
+    WORKSPACE_UPDATED,
+
+    PROJECT_CREATED,
+    PROJECT_UPDATED,
+    PROJECT_STATUS_UPDATED,
+
+    SCENE_CREATED,
+    SCENE_UPDATED,
+    SCENE_STATUS_UPDATED,
+
+    REFERENCE_CREATED,
+    REFERENCE_UPDATED,
+    REFERENCE_DELETED
+}

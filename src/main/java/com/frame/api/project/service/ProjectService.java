@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.frame.api.common.exception.ConflictException;
 import com.frame.api.common.exception.ResourceNotFoundException;
+import com.frame.api.activity.entity.ActivityResourceType;
+import com.frame.api.activity.entity.ActivityType;
+import com.frame.api.activity.service.ActivityService;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,13 +26,16 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final WorkspaceRepository workspaceRepository;
+    private final ActivityService activityService;
 
     public ProjectService(
             ProjectRepository projectRepository,
-            WorkspaceRepository workspaceRepository
+            WorkspaceRepository workspaceRepository,
+            ActivityService activityService
     ) {
         this.projectRepository = projectRepository;
         this.workspaceRepository = workspaceRepository;
+        this.activityService = activityService;
     }
 
     @Transactional
@@ -56,6 +62,15 @@ public class ProjectService {
         );
 
         Project savedProject = projectRepository.save(project);
+
+        activityService.log(
+                ownerId,
+                ActivityType.PROJECT_CREATED,
+                ActivityResourceType.PROJECT,
+                savedProject.getId(),
+                savedProject.getName(),
+                "Created project \"" + savedProject.getName() + "\""
+        );
 
         return ProjectResponse.fromEntity(savedProject);
     }
@@ -112,6 +127,15 @@ public class ProjectService {
 
         Project updatedProject = projectRepository.save(project);
 
+        activityService.log(
+                ownerId,
+                ActivityType.PROJECT_UPDATED,
+                ActivityResourceType.PROJECT,
+                updatedProject.getId(),
+                updatedProject.getName(),
+                "Updated project \"" + updatedProject.getName() + "\""
+        );
+
         return ProjectResponse.fromEntity(updatedProject);
     }
 
@@ -129,6 +153,15 @@ public class ProjectService {
         project.setStatus(request.status());
 
         Project updatedProject = projectRepository.save(project);
+
+        activityService.log(
+                ownerId,
+                ActivityType.PROJECT_STATUS_UPDATED,
+                ActivityResourceType.PROJECT,
+                updatedProject.getId(),
+                updatedProject.getName(),
+                "Changed project \"" + updatedProject.getName() + "\" status to " + updatedProject.getStatus()
+        );
 
         return ProjectResponse.fromEntity(updatedProject);
     }

@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.frame.api.common.exception.ConflictException;
 import com.frame.api.common.exception.ResourceNotFoundException;
 import com.frame.api.common.exception.ForbiddenException;
+import com.frame.api.activity.entity.ActivityResourceType;
+import com.frame.api.activity.entity.ActivityType;
+import com.frame.api.activity.service.ActivityService;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,13 +24,16 @@ public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final ActivityService activityService;
 
     public WorkspaceService(
             WorkspaceRepository workspaceRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ActivityService activityService
     ) {
         this.workspaceRepository = workspaceRepository;
         this.userRepository = userRepository;
+        this.activityService = activityService;
     }
 
     @Transactional
@@ -51,6 +57,15 @@ public class WorkspaceService {
         );
 
         Workspace savedWorkspace = workspaceRepository.save(workspace);
+
+        activityService.log(
+                ownerId,
+                ActivityType.WORKSPACE_CREATED,
+                ActivityResourceType.WORKSPACE,
+                savedWorkspace.getId(),
+                savedWorkspace.getName(),
+                "Created workspace \"" + savedWorkspace.getName() + "\""
+        );
 
         return WorkspaceResponse.fromEntity(savedWorkspace);
     }
@@ -93,6 +108,15 @@ public class WorkspaceService {
         }
 
         Workspace updatedWorkspace = workspaceRepository.save(workspace);
+
+        activityService.log(
+                ownerId,
+                ActivityType.WORKSPACE_UPDATED,
+                ActivityResourceType.WORKSPACE,
+                updatedWorkspace.getId(),
+                updatedWorkspace.getName(),
+                "Updated workspace \"" + updatedWorkspace.getName() + "\""
+        );
 
         return WorkspaceResponse.fromEntity(updatedWorkspace);
     }
