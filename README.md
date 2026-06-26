@@ -60,6 +60,10 @@ The backend foundation is being built with Java and Spring Boot, focusing on cle
 - Scene creation and listing
 - Scene update endpoints
 - Scene status update
+- Scene references
+- Reference creation and listing
+- Reference update endpoint
+- Ownership checks for references
 - Modular package structure
 - PostgreSQL integration
 - Global exception handling
@@ -77,6 +81,7 @@ Authenticated User
 └── Workspace   
     └── Project     
         └── Scene
+            └── Reference
 ```
 Frame is structured around creative workspaces.
 

@@ -347,6 +347,83 @@ APPROVED
 
 ---
 
+## References
+
+### POST `/api/references`
+
+Creates a reference inside a scene owned by the authenticated user.
+
+#### Request Body
+
+```json
+{
+  "title": "Opening color palette",
+  "description": "Reference for the visual mood of the opening scene.",
+  "url": "https://example.com/opening-palette",
+  "type": "IMAGE",
+  "sceneId": "scene-uuid"
+}
+```
+
+Available types:
+
+```txt
+IMAGE
+VIDEO
+LINK
+TEXT
+AUDIO
+DOCUMENT
+```
+
+---
+
+### GET `/api/references`
+
+Lists references from scenes owned by the authenticated user.
+
+---
+
+### GET `/api/references/{referenceId}`
+
+Returns a reference owned by the authenticated user.
+
+---
+
+### GET `/api/references/scene/{sceneId}`
+
+Lists references from a specific scene owned by the authenticated user.
+
+---
+
+### PATCH `/api/references/{referenceId}`
+
+Updates a reference owned by the authenticated user.
+
+#### Request Body
+
+All fields are optional.
+
+```json
+{
+  "title": "Opening visual mood",
+  "description": "Updated reference for the opening sequence visual atmosphere.",
+  "url": "https://example.com/updated-reference",
+  "type": "LINK"
+}
+```
+
+### DELETE `/api/references/{referenceId}`
+
+Deletes a reference owned by the authenticated user.
+
+#### Response
+
+```txt
+204 No Content
+```
+---
+
 ## Dashboard
 
 ### GET `/api/dashboard/summary`
