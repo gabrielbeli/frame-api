@@ -126,6 +126,16 @@ public class SceneReferenceService {
         return SceneReferenceResponse.fromEntity(updatedReference);
     }
 
+    @Transactional
+    public void delete(UUID referenceId, UUID ownerId) {
+        SceneReference reference = referenceRepository.findById(referenceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reference not found"));
+
+        ensureReferenceBelongsToUser(reference, ownerId);
+
+        referenceRepository.delete(reference);
+    }
+
     private void updateTitle(SceneReference reference, String title) {
         if (title.isBlank()) {
             throw new IllegalArgumentException("Reference title cannot be blank");

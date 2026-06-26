@@ -413,6 +413,15 @@ All fields are optional.
 }
 ```
 
+### DELETE `/api/references/{referenceId}`
+
+Deletes a reference owned by the authenticated user.
+
+#### Response
+
+```txt
+204 No Content
+```
 ---
 
 ## Dashboard

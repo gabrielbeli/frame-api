@@ -71,4 +71,15 @@ public class SceneReferenceController {
 
         return referenceService.update(referenceId, request, ownerId);
     }
+
+    @DeleteMapping("/{referenceId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+            @PathVariable UUID referenceId,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        UUID ownerId = UUID.fromString(jwt.getSubject());
+
+        referenceService.delete(referenceId, ownerId);
+    }
 }
