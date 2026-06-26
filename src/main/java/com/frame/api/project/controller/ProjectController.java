@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import com.frame.api.project.entity.ProjectStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,10 +37,13 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<ProjectResponse> findAll(@AuthenticationPrincipal Jwt jwt) {
+    public List<ProjectResponse> findAll(
+            @RequestParam(required = false) ProjectStatus status,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
         UUID ownerId = UUID.fromString(jwt.getSubject());
 
-        return projectService.findAllByOwnerId(ownerId);
+        return projectService.findAllByOwnerId(ownerId, status);
     }
 
     @GetMapping("/{projectId}")
@@ -55,11 +59,12 @@ public class ProjectController {
     @GetMapping("/workspace/{workspaceId}")
     public List<ProjectResponse> findByWorkspaceId(
             @PathVariable UUID workspaceId,
+            @RequestParam(required = false) ProjectStatus status,
             @AuthenticationPrincipal Jwt jwt
     ) {
         UUID ownerId = UUID.fromString(jwt.getSubject());
 
-        return projectService.findByWorkspaceId(workspaceId, ownerId);
+        return projectService.findByWorkspaceId(workspaceId, ownerId, status);
     }
 
     @PatchMapping("/{projectId}")

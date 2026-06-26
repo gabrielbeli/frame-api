@@ -20,6 +20,7 @@ import com.frame.api.activity.service.ActivityService;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Locale;
 
 @Service
 public class SceneService {
@@ -78,21 +79,39 @@ public class SceneService {
     }
 
     @Transactional(readOnly = true)
-    public List<SceneResponse> findAllByOwnerId(UUID ownerId) {
-        return sceneRepository.findByProject_Workspace_Owner_IdOrderByPositionAsc(ownerId)
+    public List<SceneResponse> findAllByOwnerId(
+            UUID ownerId,
+            SceneStatus status,
+            String layer
+    ) {
+        return sceneRepository.findByOwnerWithFilters(
+                        ownerId,
+                        status,
+                        normalizeFilter(layer)
+                )
                 .stream()
                 .map(SceneResponse::fromEntity)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<SceneResponse> findByProjectId(UUID projectId, UUID ownerId) {
+    public List<SceneResponse> findByProjectId(
+            UUID projectId,
+            UUID ownerId,
+            SceneStatus status,
+            String layer
+    ) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
 
         ensureProjectBelongsToUser(project, ownerId);
 
-        return sceneRepository.findByProjectIdOrderByPositionAsc(projectId)
+        return sceneRepository.findByProjectWithFilters(
+                        projectId,
+                        ownerId,
+                        status,
+                        normalizeFilter(layer)
+                )
                 .stream()
                 .map(SceneResponse::fromEntity)
                 .toList();
@@ -209,6 +228,14 @@ public class SceneService {
         }
 
         return position;
+    }
+
+    private String normalizeFilter(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        return value.trim().toLowerCase(Locale.ROOT);
     }
 
     @Transactional(readOnly = true)

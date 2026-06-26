@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import com.frame.api.scene.entity.SceneStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,10 +37,14 @@ public class SceneController {
     }
 
     @GetMapping
-    public List<SceneResponse> findAll(@AuthenticationPrincipal Jwt jwt) {
+    public List<SceneResponse> findAll(
+            @RequestParam(required = false) SceneStatus status,
+            @RequestParam(required = false) String layer,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
         UUID ownerId = UUID.fromString(jwt.getSubject());
 
-        return sceneService.findAllByOwnerId(ownerId);
+        return sceneService.findAllByOwnerId(ownerId, status, layer);
     }
 
     @GetMapping("/{sceneId}")
@@ -55,11 +60,13 @@ public class SceneController {
     @GetMapping("/project/{projectId}")
     public List<SceneResponse> findByProjectId(
             @PathVariable UUID projectId,
+            @RequestParam(required = false) SceneStatus status,
+            @RequestParam(required = false) String layer,
             @AuthenticationPrincipal Jwt jwt
     ) {
         UUID ownerId = UUID.fromString(jwt.getSubject());
 
-        return sceneService.findByProjectId(projectId, ownerId);
+        return sceneService.findByProjectId(projectId, ownerId, status, layer);
     }
 
     @PatchMapping("/{sceneId}")

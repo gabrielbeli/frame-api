@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import com.frame.api.reference.entity.SceneReferenceType;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,10 +36,13 @@ public class SceneReferenceController {
     }
 
     @GetMapping
-    public List<SceneReferenceResponse> findAll(@AuthenticationPrincipal Jwt jwt) {
+    public List<SceneReferenceResponse> findAll(
+            @RequestParam(required = false) SceneReferenceType type,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
         UUID ownerId = UUID.fromString(jwt.getSubject());
 
-        return referenceService.findAllByOwnerId(ownerId);
+        return referenceService.findAllByOwnerId(ownerId, type);
     }
 
     @GetMapping("/{referenceId}")
@@ -54,11 +58,12 @@ public class SceneReferenceController {
     @GetMapping("/scene/{sceneId}")
     public List<SceneReferenceResponse> findBySceneId(
             @PathVariable UUID sceneId,
+            @RequestParam(required = false) SceneReferenceType type,
             @AuthenticationPrincipal Jwt jwt
     ) {
         UUID ownerId = UUID.fromString(jwt.getSubject());
 
-        return referenceService.findBySceneId(sceneId, ownerId);
+        return referenceService.findBySceneId(sceneId, ownerId, type);
     }
 
     @PatchMapping("/{referenceId}")
