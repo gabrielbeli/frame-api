@@ -534,6 +534,67 @@ Deletes a reference owned by the authenticated user.
 ```
 ---
 
+## Comments
+
+### POST `/api/comments`
+
+Creates a comment inside a scene owned by the authenticated user.
+
+#### Request Body
+
+```json
+{
+  "content": "This scene needs a warmer visual tone in the opening sequence.",
+  "sceneId": "scene-uuid"
+}
+```
+
+---
+
+### GET `/api/comments`
+
+Lists comments from scenes owned by the authenticated user.
+
+---
+
+### GET `/api/comments/{commentId}`
+
+Returns a comment from a scene owned by the authenticated user.
+
+---
+
+### GET `/api/comments/scene/{sceneId}`
+
+Lists comments from a specific scene owned by the authenticated user.
+
+---
+
+### PATCH `/api/comments/{commentId}`
+
+Updates a comment authored by the authenticated user.
+
+#### Request Body
+
+```json
+{
+  "content": "Updated note: this scene should feel warmer, quieter and more intimate."
+}
+```
+
+---
+
+### DELETE `/api/comments/{commentId}`
+
+Deletes a comment authored by the authenticated user.
+
+#### Response
+
+```txt
+204 No Content
+```
+
+---
+
 ## Dashboard
 
 ### GET `/api/dashboard/summary`

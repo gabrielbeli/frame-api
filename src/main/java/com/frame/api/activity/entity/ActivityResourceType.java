@@ -4,5 +4,6 @@ public enum ActivityResourceType {
     WORKSPACE,
     PROJECT,
     SCENE,
-    REFERENCE
+    REFERENCE,
+    COMMENT
 }
